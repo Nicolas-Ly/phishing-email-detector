@@ -23,7 +23,6 @@ The project combines:
 - Build a machine learning/NLP model that can classify phishing emails
 - Extract meaningful email-based security features
 - Create a clean and modular pipeline for parsing, feature extraction, training, and evaluation
-- Collaboratively develop a strong GitHub project for resumes, interviews, and technical discussion
 
 ---
 
@@ -82,7 +81,7 @@ Examples of tasks:
 
 ---
 
-## Suggested Tech Stack
+## Tech Stack
 
 - **Language:** Python
 - **Libraries:** pandas, scikit-learn, nltk, transformers, torch, regex
@@ -92,7 +91,7 @@ Examples of tasks:
 
 ---
 
-## Proposed Project Structure
+## Project Structure
 
 ```bash
 phishing-email-detector/
