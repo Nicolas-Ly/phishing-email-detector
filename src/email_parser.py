@@ -1,50 +1,32 @@
-# This module provides functions for parsing email headers. It uses the email.parser module to parse email messages and the re module 
-# to extract information from the headers.
 from __future__ import annotations
 
 from email import policy
-# The email.parser module provides a Parser class which can be used to parse email messages. The BytesParser class is a subclass 
-# of Parser that can be used to parse email messages from bytes.
 from email.parser import BytesParser
-# The email.message module provides a Message class which represents an email message. The EmailMessage class is a subclass of
-#  Message that provides additional methods for working with email messages.
 from pathlib import Path
-# The typing module provides support for type hints. The Any type is a special type that can be used to indicate that a value can 
-# be of any type.
 from typing import Any
-# The re module provides support for regular expressions. The re module provides a set of functions that allow you to search for 
-# and manipulate strings using regular expressions.
 import re
 
-# The EmailParser class provides methods for parsing email messages and extracting information from the headers. 
-# The parse_email_file method takes a file path as input and returns a dictionary containing the extracted information. The _extract_body method 
-# is a helper method that extracts the body of the email message. The _extract_urls method is a helper method that extracts URLs from the email 
-# body. The _clean_header method is a helper method that cleans header values and returns a safe string.
+
 class EmailParser:
     """
     Parse .eml files and extract structured email data.
 
-    This parser focuses on the fields most useful for phishing analysis:
-    - From
-    - Reply-To
-    - Return-Path
-    - Subject
-    - Body
-    - URLs
+    This parser supports:
+    - parsing a single .eml file
+    - parsing every .eml file inside a directory
     """
 
     URL_PATTERN = re.compile(r"https?://[^\s<>\"]+|www\.[^\s<>\"]+")
-    # The URL_PATTERN is a regular expression that matches URLs in the email body. It looks for strings that start with 
-    # "http://" or "https://" or "www." and are followed by any characters that are not whitespace, angle brackets, or double quotes.
+
     def parse_email_file(self, file_path: str | Path) -> dict[str, Any]:
         """
-        Parse an email file and return important fields as a dictionary.
+        Parse a single .eml file and return structured data.
 
         Args:
-            file_path: Path to the .eml file
+            file_path: Path to an email file
 
         Returns:
-            Dictionary containing extracted email fields
+            Dictionary containing parsed fields
         """
         path = Path(file_path)
 
@@ -61,6 +43,8 @@ class EmailParser:
         urls = self._extract_urls(body)
 
         return {
+            "file_name": path.name,
+            "file_path": str(path),
             "from": self._clean_header(message.get("From")),
             "reply_to": self._clean_header(message.get("Reply-To")),
             "return_path": self._clean_header(message.get("Return-Path")),
@@ -69,18 +53,43 @@ class EmailParser:
             "urls": urls,
         }
 
-    
-    # parse_email_file method takes a file path as input and returns a dictionary containing the extracted information.
-    # It first checks if the file exists and is a valid file. Then it opens the file in binary mode and uses the BytesParser 
-    # to parse the email message. It extracts the body of the email using the _extract_body method and then extracts URLs from the 
-    # body using the _extract_urls method. Finally, it returns a dictionary containing the cleaned header values, body, and URLs.
-    
+    def parse_email_directory(self, directory_path: str | Path) -> list[dict[str, Any]]:
+        """
+        Parse all .eml files in a directory.
+
+        Args:
+            directory_path: Path to directory containing .eml files
+
+        Returns:
+            List of parsed email dictionaries
+        """
+        directory = Path(directory_path)
+
+        if not directory.exists():
+            raise FileNotFoundError(f"Directory not found: {directory}")
+
+        if not directory.is_dir():
+            raise ValueError(f"Provided path is not a directory: {directory}")
+
+        parsed_emails: list[dict[str, Any]] = []
+
+        for email_path in sorted(directory.glob("*.eml")):
+            try:
+                parsed_email = self.parse_email_file(email_path)
+                parsed_emails.append(parsed_email)
+            except Exception as error:
+                print(f"Skipping {email_path.name}: {error}")
+
+        return parsed_emails
+
     def _extract_body(self, message: Any) -> str:
         """
-        Extract the plain text body from an email message.
+        Extract the email body.
 
-        For multipart emails, this tries to find the first text/plain part.
-        If no text/plain part exists, it falls back to text/html content.
+        For multipart emails:
+        - prefer text/plain
+        - fall back to text/html
+        - skip attachments
         """
         if message.is_multipart():
             plain_parts: list[str] = []
@@ -102,15 +111,15 @@ class EmailParser:
                     continue
 
                 if content_type == "text/plain":
-                    plain_parts.append(content)
+                    plain_parts.append(content.strip())
                 elif content_type == "text/html":
-                    html_parts.append(content)
+                    html_parts.append(content.strip())
 
             if plain_parts:
-                return "\n".join(part.strip() for part in plain_parts if part.strip())
+                return "\n".join(part for part in plain_parts if part)
 
             if html_parts:
-                return "\n".join(part.strip() for part in html_parts if part.strip())
+                return "\n".join(part for part in html_parts if part)
 
             return ""
 
@@ -120,19 +129,16 @@ class EmailParser:
         except Exception:
             return ""
 
-    # The _extract_body method extracts the plain text body from an email message. For multipart emails, it tries to find the first 
-    # text/plain part. If no text/plain part exists, it falls back to text/html content. It returns the extracted body as a string.
-
     def _extract_urls(self, text: str) -> list[str]:
         """
-        Extract URLs from the email body.
+        Extract URLs from text.
         """
         if not text:
             return []
 
         matches = self.URL_PATTERN.findall(text)
 
-        cleaned_urls = []
+        cleaned_urls: list[str] = []
         for url in matches:
             cleaned_url = url.rstrip(".,);]>\"'")
             cleaned_urls.append(cleaned_url)
@@ -142,24 +148,32 @@ class EmailParser:
     @staticmethod
     def _clean_header(value: str | None) -> str:
         """
-        Clean header values and return a safe string.
+        Return a stripped header value or empty string.
         """
         if value is None:
             return ""
-
         return value.strip()
 
 
 if __name__ == "__main__":
     parser = EmailParser()
 
-    sample_path = "data/sample_emails/sample1.eml"
+    sample_directory = "data/sample_emails"
 
     try:
-        parsed_email = parser.parse_email_file(sample_path)
+        parsed_emails = parser.parse_email_directory(sample_directory)
 
-        print("Parsed Email:")
-        for key, value in parsed_email.items():
-            print(f"{key}: {value}")
+        print(f"Parsed {len(parsed_emails)} email(s)\n")
+
+        for email_data in parsed_emails:
+            print("=" * 60)
+            print(f"File: {email_data['file_name']}")
+            print(f"From: {email_data['from']}")
+            print(f"Reply-To: {email_data['reply_to']}")
+            print(f"Subject: {email_data['subject']}")
+            print(f"URLs: {email_data['urls']}")
+            print("=" * 60)
+            print()
+
     except Exception as error:
-        print(f"Error parsing email: {error}")
+        print(f"Error: {error}")
