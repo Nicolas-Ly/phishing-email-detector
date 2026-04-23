@@ -1,0 +1,38 @@
+From: IT Help Desk <helpdesk@it-support-portal.org>
+To: employee@yourcompany.com
+Subject: [ACTION REQUIRED] Your network password expires in 24 hours
+Date: Thu, 17 Apr 2025 08:55:00 +0000
+Message-ID: <HD-PASS-EXP-20250417@it-support-portal.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+
+IT HELP DESK — AUTOMATED NOTIFICATION
+
+Dear Employee,
+
+This is an automated reminder from the Corporate IT Help Desk.
+
+Your Active Directory / network login password is set to EXPIRE within the next 
+24 hours. Failure to update your password will result in loss of access to:
+
+  - Email (Outlook / OWA)
+  - VPN remote access
+  - Shared drives
+  - Microsoft 365 applications
+
+To prevent disruption, please click the link below to update your password now:
+
+  https://it-support-portal.org/password-reset?uid=emp-29193&token=rK8mN2xQ
+
+You will be asked to enter your current password and create a new one.
+
+If you have already changed your password today, please disregard this message.
+
+For assistance, contact the Help Desk:
+  Phone: (800) 555-0147
+  Email: helpdesk@it-support-portal.org
+  Hours: Mon–Fri 7am–7pm EST
+
+Thank you,
+Corporate IT Help Desk
+IT Services Division

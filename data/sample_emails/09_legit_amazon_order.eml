@@ -1,0 +1,50 @@
+From: Amazon.com <order-update@amazon.com>
+To: jsmith@example.com
+Subject: Your Amazon.com order of "Anker USB-C Charging Hub..." has shipped
+Date: Wed, 23 Apr 2025 09:14:02 +0000
+Message-ID: <order-113-7294810-3847291@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset="UTF-8"
+
+<!DOCTYPE html>
+<html>
+<body style="font-family:Arial,sans-serif;color:#333;background:#f3f3f3;padding:20px;">
+<div style="max-width:600px;margin:auto;background:#fff;padding:24px;border-radius:4px;">
+
+  <h2 style="color:#FF9900;">Your order has shipped!</h2>
+  <p>Hi John,</p>
+  <p>Good news — your package is on its way.</p>
+
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+    <tr style="background:#f7f7f7;">
+      <td style="padding:10px;"><strong>Order #</strong></td>
+      <td style="padding:10px;">113-7294810-3847291</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;"><strong>Item</strong></td>
+      <td style="padding:10px;">Anker 341 USB-C Hub (7-in-1) — Qty: 1</td>
+    </tr>
+    <tr style="background:#f7f7f7;">
+      <td style="padding:10px;"><strong>Carrier</strong></td>
+      <td style="padding:10px;">UPS</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;"><strong>Tracking #</strong></td>
+      <td style="padding:10px;">1Z999AA10123456784</td>
+    </tr>
+    <tr style="background:#f7f7f7;">
+      <td style="padding:10px;"><strong>Estimated Delivery</strong></td>
+      <td style="padding:10px;">Friday, April 25, 2025</td>
+    </tr>
+  </table>
+
+  <p><a href="https://www.amazon.com/your-orders" style="color:#0066C0;">Track your package</a></p>
+
+  <p>Thank you for shopping with Amazon.</p>
+  <hr/>
+  <small style="color:#aaa;">Amazon.com, Inc. | 410 Terry Ave N, Seattle, WA 98109<br/>
+  You received this email because you placed an order. © 2025 Amazon.com</small>
+
+</div>
+</body>
+</html>
